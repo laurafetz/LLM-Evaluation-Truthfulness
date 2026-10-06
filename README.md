@@ -150,11 +150,7 @@ This project demonstrates experience with:
 - Comparative model evaluation
 - Reproducible Python workflows
 
-## Project Team and Attribution
-
-This project was originally completed as a **group project for the Deep Learning in Python course at the University of Amsterdam**.
-
-### Contributors
+## Contributors
 
 - **Laura Maria Fetz**
 - **Martin Turna**
