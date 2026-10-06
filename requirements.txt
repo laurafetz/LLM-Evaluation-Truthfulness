@@ -1,0 +1,13 @@
+pandas
+numpy
+scikit-learn
+sentence-transformers
+transformers
+datasets
+evaluate
+rouge-score
+bert-score
+torch
+
+# BLEURT may require installation from the Google Research repository:
+# pip install git+https://github.com/google-research/bleurt.git

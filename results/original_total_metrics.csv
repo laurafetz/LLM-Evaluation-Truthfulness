@@ -1,0 +1,6 @@
+Model,Accuracy_Confident,Mean_BLEU,Mean_BLEURT,Mean_ROUGE1,Mean_ROUGE2,Mean_ROUGEL,Mean_Cosine,Sample_Size,Confident_Samples
+qwen_base,0.4245,0.0152,-0.9647,0.1972,0.0746,0.1696,0.4886,817,318
+qwen_base_prompt,0.4498,0.0251,-0.472,0.2933,0.1313,0.2503,0.6938,817,618
+qwen_base_ft,0.6027,0.0657,-0.4402,0.2313,0.1575,0.224,0.5771,817,516
+qwen_base_rag,0.476,0.0079,-1.0238,0.184,0.061,0.1563,0.4125,817,292
+qwen_instruct_rag,0.4964,0.0336,-0.2746,0.3462,0.1551,0.3041,0.7286,817,685
