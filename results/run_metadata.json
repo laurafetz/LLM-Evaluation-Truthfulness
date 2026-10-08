@@ -1,0 +1,29 @@
+{
+  "date_utc": "2026-10-08T18:34:22Z",
+  "python": "3.12.14",
+  "bleurt_checkpoint": "bleurt-base-128",
+  "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+  "embedding_revision": "c9745ed1d9f207416be6d2e6f8de32d1f16199bf",
+  "confidence_threshold": 0.6,
+  "bootstrap_seed": 20261008,
+  "bootstrap_replicates": 10000,
+  "elapsed_seconds": 1656.420844957931,
+  "packages": {
+    "tensorflow": "2.16.2",
+    "bleurt": "0.0.2",
+    "sentence-transformers": "3.4.1",
+    "transformers": "4.48.3",
+    "numpy": "1.26.4",
+    "pandas": "3.0.6",
+    "scipy": "1.17.1",
+    "torch": "2.14.1"
+  },
+  "input_sha256": {
+    "qwen_qa_results_no_system_prompt.csv": "1dce20131acb56ad9ff50f55d9fbd23e5865c228f8f33c28aa2f29e85576e705",
+    "TruthfulQA-2.csv": "8d7dd15f033196140f032d97d30f037da7a7b1192c3f36f9937c1850925335a2",
+    "qwen_qa_results.csv": "007ea54babbcb27d030cf3aee11eb3502e5eadfdc9696def152ffa695b3b7912",
+    "qwen_instruct_rag_answers.csv": "8a9bc6b5272142c40523c249a5815f2c3d07bcce71eb9e60d3b4c8efa8cc9343",
+    "qwen_qa_results_system_prompt.csv": "818dbde9648f01e214364fbf8c5bc5bb081c9000f91867ee9044eda6a6f64920",
+    "qwen_base_rag_answers.csv": "d12ac705e74702162ab8f84a383f60ede79773a8a46ab69b7b145a438f9d7fb7"
+  }
+}

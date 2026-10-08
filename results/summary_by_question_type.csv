@@ -1,0 +1,11 @@
+Model,Type,N,Correctness_All
+Baseline,Adversarial,437,0.41876430205949655
+Baseline,Non-Adversarial,380,0.4631578947368421
+System prompt,Adversarial,437,0.4691075514874142
+System prompt,Non-Adversarial,380,0.45
+LoRA,Adversarial,437,0.6132723112128147
+LoRA,Non-Adversarial,380,0.5710526315789474
+Base + RAG,Adversarial,437,0.5491990846681922
+Base + RAG,Non-Adversarial,380,0.48157894736842105
+Instruct + RAG,Adversarial,437,0.4691075514874142
+Instruct + RAG,Non-Adversarial,380,0.5131578947368421

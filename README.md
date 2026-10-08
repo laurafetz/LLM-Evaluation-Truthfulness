@@ -1,164 +1,82 @@
-# LLM Evaluation Truthfulness
-# Evaluating LLM Truthfulness with Prompting, Fine-Tuning and RAG
+# Evaluating Saved Qwen Answers on TruthfulQA
 
-This project evaluates how different large language model adaptation strategies affect the truthfulness and semantic quality of generated answers.
+A three-person coursework project comparing five Qwen 2.5 answer files: baseline, system prompting, LoRA fine-tuning, base-model RAG, and instruction-tuned RAG. The current repository evaluates the saved outputs on the **same 817 questions**; it does not retrain models or regenerate answers.
 
-Five variants of **Qwen 2.5** are compared using TruthfulQA-derived question and reference-answer data:
+## Results on all questions
 
-1. Qwen 2.5 baseline
-2. Baseline + system prompt
-3. LoRA fine-tuned Qwen 2.5
-4. Baseline + Retrieval-Augmented Generation (RAG)
-5. Qwen 2.5 Instruct + RAG
+**Primary metric: reference-based correctness across all 817 questions.** Every question contributes, including blank answers. Confidence intervals are percentile intervals from 10,000 question-level bootstrap resamples (seed 20261008).
 
-The repository contains the model-output datasets required to reproduce the evaluation.
+| Saved answer set | Correctness, all questions | 95% bootstrap CI (%) | Cosine > 0.60 subset | Correctness in that subset |
+| --- | ---: | ---: | ---: | ---: |
+| Baseline | 43.94% | [40.51, 47.37] | 318 / 817 | 42.45% |
+| System prompt | 46.02% | [42.72, 49.45] | 618 / 817 | 44.98% |
+| LoRA | 59.36% | [56.06, 62.67] | 516 / 817 | 60.27% |
+| Base + RAG | 51.77% | [48.35, 55.20] | 292 / 817 | 46.92% |
+| Instruct + RAG | 48.96% | [45.53, 52.39] | 685 / 817 | 49.34% |
 
-## Research Question
+The final two columns are diagnostic. Each model selects a different similarity-filtered subset, so filtered percentages cannot provide a fair ranking of the models. Cosine similarity is not a calibrated probability of correctness.
 
-How do prompt engineering, LoRA fine-tuning, and retrieval-augmented generation affect the truthfulness and semantic similarity of Qwen 2.5 responses?
+![Correctness on all 817 questions with bootstrap intervals](results/correctness_all.png)
 
-## Data
+The LoRA answer file has the highest unfiltered reference-match rate. Its training data and the RAG corpora are unknown; these results do **not establish a leakage-free improvement attributable to adaptation**. See [model provenance](MODEL_PROVENANCE.md).
 
-The repository distinguishes between the **source benchmark data** and the **generated model outputs**.
+[Paired comparisons](results/paired_comparisons.csv) use matched questions, bootstrap intervals for differences, exact McNemar tests on discordant correctness labels, and Holm-adjusted p-values across all ten model pairs. Question-level resampling describes uncertainty across benchmark questions; it does not capture generation variability, training uncertainty, or reference-labelling error.
 
-### Source benchmark
+The full evaluation ran on 8 October 2026. [Run metadata](results/run_metadata.json) records input hashes, checkpoints, package versions, seed, and runtime; individual scored answers are included for audit. Historical coursework summaries are retained as `results/original_*.csv`, but the table above uses recomputed scores.
 
-`data/TruthfulQA-2.csv`
+## Scoring method and limits
 
-This is the TruthfulQA dataset used in the project. It contains 817 benchmark questions, including question type, category, correct reference answers, incorrect reference answers, and source information.
+For each answer, BLEURT scores all supplied correct and incorrect references. The reference with the largest score determines the binary label: correct if it is from the correct-answer set. References are ordered with correct ones first, so exact ties favour the correct set, preserving the original project rule. Blank answers and the repeated no-comment string handled in the source are scored incorrect.
 
-### Generated model outputs
+This proxy uses available reference labels and rewards semantic agreement rather than exact wording. BLEURT was trained to predict text-generation quality, however, and a nearest reference can miss contradictions or factual errors. These scores are **not human truth judgements**, do not measure informativeness, and are separate from TruthfulQA's multiple-choice task. The upstream benchmark also supports reference-based metrics; this project's cosine filter is an additional diagnostic, not a standard benchmark score. [TruthfulQA source and evaluation](https://github.com/sylinrl/TruthfulQA).
 
-| File | Model |
-| --- | --- |
-| `qwen_qa_results_no_system_prompt.csv` | Qwen 2.5 baseline |
-| `qwen_qa_results_system_prompt.csv` | Baseline + system prompt |
-| `qwen_qa_results.csv` | LoRA fine-tuned model |
-| `qwen_base_rag_answers.csv` | Baseline + RAG |
-| `qwen_instruct_rag_answers.csv` | Qwen Instruct + RAG |
+The scorer is explicitly `bleurt-base-128`, matching the default in the original `evaluate.load("bleurt")` call. It truncates long reference/answer pairs to a combined 128 WordPiece tokens. Selected-reference cosine similarity uses `sentence-transformers/all-MiniLM-L6-v2` at a pinned revision. Auxiliary BLEU/ROUGE summaries from the old workflow are not recomputed: the revised analysis focuses on the correctness proxy, similarity coverage, and paired comparisons.
 
-`analysis.py` merges each generated-answer file back to the canonical TruthfulQA benchmark by question before computing the evaluation metrics.
+## Model and contribution disclosures
 
-## Evaluation
+The exact Qwen parameter count and checkpoint revision, LoRA training examples/splits, retrieval corpus, generation settings, and benchmark-overlap checks are **unknown**. The supplied CSV filenames identify the variants, but they do not establish those details. Similarity columns embedded in the two RAG output files are ignored and all references are read from the supplied benchmark file.
 
-The analysis compares each generated response with the available correct and incorrect reference answers.
+Original project contributors: **Laura Maria Fetz, Martin Turna, and Bart Amin**. Individual responsibilities were not documented in the available project materials, so training, retrieval construction, and other original implementation tasks are not attributed to a particular person. [Full provenance disclosures](MODEL_PROVENANCE.md).
 
-For each response:
+## Run
 
-1. BLEURT is used to identify the best-matching reference answer.
-2. BLEU and ROUGE measure lexical overlap with the selected reference.
-3. Sentence-transformer embeddings are used to calculate cosine similarity.
-4. The generated response is classified as reference-based correct when its best-matching reference belongs to the correct-answer set.
-5. Confidence-filtered correctness is calculated for responses with cosine similarity above a predefined threshold.
-
-The default threshold used in `analysis.py` is:
-
-```python
-CONFIDENCE_THRESHOLD = 0.60
-```
-
-
-## Original Reported Results
-
-The original project results are included in the `results/` folder, so the repository documents both the input data and the reported outputs without requiring the models to be rerun.
-
-| Model | High-confidence correctness | Mean cosine similarity | High-confidence responses |
-| --- | ---: | ---: | ---: |
-| Baseline | 42.45% | 0.489 | 318 |
-| Baseline + system prompt | 44.98% | 0.694 | 618 |
-| LoRA fine-tuned | **60.27%** | 0.577 | 516 |
-| Baseline + RAG | 47.60% | 0.413 | 292 |
-| Qwen Instruct + RAG | 49.64% | **0.729** | **685** |
-
-The original notebook also reports separate results for adversarial and non-adversarial questions; these are included as CSV files in `results/`.
-
-## Reproducibility
-
-Create a Python environment and install the dependencies:
+Use **Python 3.12**; the verified run used Python 3.12.14 with CPU scoring.
 
 ```bash
-pip install -r requirements.txt
-```
-
-Then run:
-
-```bash
+python3.12 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
 python analysis.py
 ```
 
-The script reads all five files from `data/` and writes the evaluation outputs to `results/`.
+The first full run downloads the BLEURT checkpoint and sentence-embedding model to the ignored `.cache/` directory. It then scores all five files and writes CSVs, a figure, and metadata to `results/`.
 
-## Repository Structure
+To check the inputs or recompute the statistical tables from the included scored answers:
 
-```text
-Python Project 1 - LLM Evaluation/
-├── README.md
-├── analysis.py
-├── requirements.txt
-├── data/
-│   ├── TruthfulQA-2.csv
-│   ├── qwen_qa_results_no_system_prompt.csv
-│   ├── qwen_qa_results_system_prompt.csv
-│   ├── qwen_qa_results.csv
-│   ├── qwen_base_rag_answers.csv
-│   └── qwen_instruct_rag_answers.csv
-└── results/
-    ├── original_total_metrics.csv
-    ├── original_adversarial_metrics.csv
-    ├── original_non_adversarial_metrics.csv
-    ├── validation_report.csv
+```bash
+python analysis.py --validate-only
+python analysis.py --summarize-only
+python test_statistics.py
 ```
 
+`--summarize-only` verifies the question keys and saved answers against current inputs. The small statistical checks cover question alignment under row reordering, identical model pairs, the exact discordant-pair p-value, and an empty filtered subset.
 
-## Validation
+## Files and data attribution
 
-The packaged repository was checked for:
+```text
+LLM-Evaluation-Truthfulness/
+├── analysis.py
+├── test_statistics.py
+├── requirements.txt
+├── MODEL_PROVENANCE.md
+├── THIRD_PARTY_NOTICES.md
+├── LICENSES/TruthfulQA-Apache-2.0.txt
+├── data/                        # Benchmark and five saved answer sets
+├── results/                     # Scored answers, summaries, paired tests, figure
+├── .gitignore
+└── README.md
+```
 
-- Python syntax validity of `analysis.py`;
-- presence of the TruthfulQA source dataset;
-- presence of all five model-output files;
-- one-to-one matching of all **817 questions** between each model-output file and the benchmark.
+TruthfulQA is credited to Stephanie Lin, Jacob Hilton, and Owain Evans. Its Apache 2.0 licence and source attribution are preserved in [third-party notices](THIRD_PARTY_NOTICES.md). The supplied CSV is the course version of the benchmark, not a substitution with a newer upstream file.
 
-The full metric recomputation was not executed in this packaging environment because it requires external runtime dependencies and model downloads (`evaluate`, BLEURT, and `sentence-transformers`). These dependencies are listed in `requirements.txt`.
-
-## Methods and Python Packages
-
-The analysis uses:
-
-- `pandas`
-- `numpy`
-- `evaluate`
-- `sentence-transformers`
-- `scikit-learn`
-- `BLEURT`
-- `BLEU`
-- `ROUGE`
-
-## Skills Demonstrated
-
-This project demonstrates experience with:
-
-- Large language model evaluation
-- Natural language processing
-- Qwen 2.5
-- LoRA fine-tuning
-- Retrieval-Augmented Generation
-- Prompt engineering
-- Transformer embeddings
-- Semantic similarity
-- NLP evaluation metrics
-- Comparative model evaluation
-- Reproducible Python workflows
-
-## Contributors
-
-- **Laura Maria Fetz**
-- **Martin Turna**
-- **Bart Amin**
-
-## References
-
-- Lin, S., Hilton, J., & Evans, O. (2021). *TruthfulQA: Measuring How Models Mimic Human Falsehoods.*
-- Papineni, K., Roukos, S., Ward, T., & Zhu, W. (2002). *BLEU: A Method for Automatic Evaluation of Machine Translation.*
-- Lin, C. (2004). *ROUGE: A Package for Automatic Evaluation of Summaries.*
-- Sellam, T., Das, D., & Parikh, A. (2020). *BLEURT: Learning Robust Metrics for Text Generation.*
+References: [TruthfulQA (Lin et al., 2021)](https://arxiv.org/abs/2109.07958), [BLEURT (Sellam et al., 2020)](https://arxiv.org/abs/2004.04696).
