@@ -1,4 +1,4 @@
-# Python Project 1 - LLM Evaluation
+# LLM Evaluation Truthfulness
 # Evaluating LLM Truthfulness with Prompting, Fine-Tuning and RAG
 
 This project evaluates how different large language model adaptation strategies affect the truthfulness and semantic quality of generated answers.
