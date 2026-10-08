@@ -80,6 +80,6 @@ I do not know the exact Qwen checkpoint or size, LoRA training data, RAG corpus,
 
 ## Credits
 
-Project authors: **Laura Maria Fetz**, **Martin Turna**, and **Bart Amin**. My individual training and retrieval responsibilities were not recorded in the saved materials.
+Project authors: **Laura Maria Fetz**, **Martin Turna**, and **Bart Amin**.
 
 TruthfulQA is by **Stephanie Lin, Jacob Hilton, and Owain Evans** ([source](https://github.com/sylinrl/TruthfulQA), [paper](https://arxiv.org/abs/2109.07958)). I include the [Apache 2.0 licence](LICENSES/TruthfulQA-Apache-2.0.txt). The course CSV has a different filename from upstream; I retain its supplied questions, references, source column, and ordering. This attribution also applies to benchmark content in the generated-answer files. It does not assign a licence to the project's code or generated answers. I use BLEURT by Sellam and colleagues ([paper](https://arxiv.org/abs/2004.04696)).
