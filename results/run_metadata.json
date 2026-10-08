@@ -25,5 +25,10 @@
     "qwen_instruct_rag_answers.csv": "8a9bc6b5272142c40523c249a5815f2c3d07bcce71eb9e60d3b4c8efa8cc9343",
     "qwen_qa_results_system_prompt.csv": "818dbde9648f01e214364fbf8c5bc5bb081c9000f91867ee9044eda6a6f64920",
     "qwen_base_rag_answers.csv": "d12ac705e74702162ab8f84a383f60ede79773a8a46ab69b7b145a438f9d7fb7"
-  }
+  },
+  "project_authors": [
+    "Laura Maria Fetz",
+    "Martin Turna",
+    "Bart Amin"
+  ]
 }

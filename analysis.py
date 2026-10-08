@@ -1,3 +1,4 @@
+# Project authors: Laura Maria Fetz, Martin Turna, and Bart Amin
 """Evaluate saved answers on every benchmark question; no model generation."""
 from pathlib import Path
 from itertools import combinations
@@ -183,6 +184,7 @@ def main():
     summarize(evaluated,out,args.bootstrap_reps)
     if not args.summarize_only:
         metadata={"date_utc":time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime()),"python":platform.python_version(),"bleurt_checkpoint":"bleurt-base-128","embedding_model":EMBEDDING_MODEL,"embedding_revision":EMBEDDING_REVISION,"confidence_threshold":THRESHOLD,"bootstrap_seed":SEED,"bootstrap_replicates":args.bootstrap_reps,"elapsed_seconds":time.perf_counter()-start,"packages":{p:importlib.metadata.version(p) for p in ["tensorflow","bleurt","sentence-transformers","transformers","numpy","pandas","scipy","torch"]},"input_sha256":{f.name:hashlib.sha256(f.read_bytes()).hexdigest() for f in (ROOT/"data").glob("*.csv")}}
+        metadata["project_authors"] = ["Laura Maria Fetz", "Martin Turna", "Bart Amin"]
         (out/"run_metadata.json").write_text(json.dumps(metadata,indent=2)+"\n")
 
 

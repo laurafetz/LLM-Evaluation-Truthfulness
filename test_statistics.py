@@ -1,3 +1,4 @@
+# Project authors: Laura Maria Fetz, Martin Turna, and Bart Amin
 """Small deterministic checks of pairing and exact discordant-pair tests."""
 import tempfile
 from pathlib import Path

@@ -1,6 +1,0 @@
-model,file,model_rows,benchmark_rows,matched_rows,unique_matched_questions,missing_generated_answers
-qwen_base,qwen_qa_results_no_system_prompt.csv,817,817,817,817,0
-qwen_base_prompt,qwen_qa_results_system_prompt.csv,817,817,817,817,0
-qwen_base_ft,qwen_qa_results.csv,817,817,817,817,0
-qwen_base_rag,qwen_base_rag_answers.csv,817,817,817,817,0
-qwen_instruct_rag,qwen_instruct_rag_answers.csv,817,817,817,817,0
